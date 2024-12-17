@@ -1,0 +1,168 @@
+/* style.qss */
+
+QWidget {
+    background-color: #f5f5f5;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+    color: #333;
+}
+
+/* 侧边栏样式 */
+QFrame#sidebar {
+    background-color: #fff;
+    border-right: 1px solid #e0e0e0;
+}
+
+/* 侧边栏 Logo 和名称容器样式 */
+QFrame#logo_name_frame {
+     background-color: transparent;
+     margin-bottom: 15px;
+}
+
+/* 侧边栏 Logo 和名称样式 */
+QLabel#logo_label {
+   background-color: transparent;
+}
+QLabel#app_name_label{
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    background-color: transparent;
+}
+
+/* 按钮样式 */
+QPushButton {
+   background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    color: #555;
+    border-radius:4px;
+    padding: 8px 15px;
+    text-align: left;
+    margin: 3px 5px;
+    outline: none; /* 移除焦点时的虚线框 */
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+QPushButton:checked {
+    background-color: #e0e0e0;
+    color: #333;
+    border-left: 3px solid #007bff; /* 选中时突出显示左侧边框 */
+}
+QPushButton:pressed{
+   background-color: #e0e0e0;
+   color: #333;
+}
+
+
+/* 下拉框样式 */
+QComboBox {
+   background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px;
+    padding-right: 25px; /* 留出下拉箭头空间 */
+    color: #555; /* 设置文本颜色 */
+}
+
+QComboBox::drop-down {
+    border: 0px;
+}
+
+QComboBox::down-arrow {
+     /* 这里应该替换为你的向下箭头图标的路径 */
+    image: url("down_arrow.png");
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+}
+
+QComboBox QAbstractItemView {
+   border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    selection-background-color: #e0e0e0;
+}
+
+QLineEdit {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px;
+}
+
+QLabel {
+    color: #333;
+}
+
+/* QTextBrowser 样式 */
+QTextBrowser {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+     padding: 6px;
+     /* 移除默认的阴影效果 */
+    box-shadow: none;
+    outline: none;
+}
+/* QTextBrowser 基础样式*/
+QTextBrowser * {
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    font-size:13px;
+    outline: none;
+}
+QTextBrowser p {
+   margin-bottom: 10px;
+}
+
+QTextBrowser a {
+		outline: none;
+}
+
+/* 强制图片使用适应容器的宽度，防止超出 */
+QTextBrowser img{
+    max-width: 100% !important;
+    height: auto !important;
+}
+QTextBrowser li{
+    margin-bottom: 5px;
+}
+ /* 确保滚动条样式生效 */
+QAbstractScrollArea{
+    background-color: #fff !important;
+}
+
+QScrollBar:vertical {
+    width: 8px !important; /* 滚动条宽度 */
+       background: rgba(0,0,0, .05) !important; /* 滚动条背景色 */
+       border-radius: 4px !important;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(0,0,0, 0.2) !important; /* 滑块背景色 */
+    min-height: 20px !important; /* 滑块最小高度 */
+    border-radius: 4px !important; /* 滑块圆角 */
+}
+
+QScrollBar::handle:vertical:hover {
+      background: rgba(0,0,0, 0.3) !important;  /* 鼠标悬停时的滑块背景色 */
+}
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+	height: 0px !important;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+	background: none !important;
+    /*background: pink !important;*/  方便测试时查看效果
+}
+
+QRadioButton {
+		outline: none;
+}
