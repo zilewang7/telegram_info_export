@@ -22,9 +22,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: 安装UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+
       - name: 打包应用
         run: |
-          pyinstaller -F main.py -n telegram_info_export --add-data "assets\logo.png;assets" --add-data "app\about.md;app" --add-data "style\style.qss;style"
+          pyinstaller -F main.py -n telegram_info_export --add-data "assets\logo.png;assets" --add-data "app\about.md;app" --add-data "style\style.qss;style" --upx-dir "$UPX_PATH"
 
       - name: 上传发布资源
         uses: actions/upload-release-asset@v1
