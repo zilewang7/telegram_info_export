@@ -6,9 +6,9 @@ import pandas as pd
 from telethon import TelegramClient
 from PyQt5.QtCore import QThread, pyqtSignal
 from openpyxl.reader.excel import load_workbook
-from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit
 from telethon.errors import SessionPasswordNeededError
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit
 
 
 async def get_telegram_info(api_name, api_id, api_hash, phone_number, proxy=None, parent=None):  # 添加parent参数

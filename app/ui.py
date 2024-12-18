@@ -1,13 +1,11 @@
-from pdb import lasti2lineno
-
 import requests
+import markdown
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout,
     QHBoxLayout, QFrame, QRadioButton, QStackedWidget, QGridLayout, QTextBrowser
 )
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QPixmap, QIcon
-import markdown
 
 from app.version import VERSION
 
