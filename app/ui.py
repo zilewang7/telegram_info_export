@@ -1,3 +1,5 @@
+from pdb import lasti2lineno
+
 import requests
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout,
@@ -226,7 +228,13 @@ class Ui(QWidget):
             )
             if response_latest_version.status_code == 200:
                 latest_version = response_latest_version.text
-                markdown_text = markdown_text.replace('{latest_version}', latest_version)
+                # latest_version = 'VERSION = \'v1.0.0\''
+                namespace = {}
+                exec(latest_version, namespace)
+                markdown_text = markdown_text.replace(
+                    '{latest_version}',
+                    namespace.get('VERSION', '<span style="color: red;">unknown</span>')
+                )
             else:
                 markdown_text = markdown_text.replace(
                     '{latest_version}', '<span style="color: red;">unknown</span>'
