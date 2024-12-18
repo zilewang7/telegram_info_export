@@ -1,3 +1,4 @@
+import requests
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout,
     QHBoxLayout, QFrame, QRadioButton, QStackedWidget, QGridLayout, QTextBrowser
@@ -5,6 +6,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap, QIcon
 import markdown
+
+from app.version import VERSION
 
 
 class Ui(QWidget):
@@ -135,7 +138,7 @@ class Ui(QWidget):
         layout.addWidget(self.phone_input, 2, 1)
 
         # 保存/获取数据按钮
-        self.main_btn_2 = QPushButton("保存并获取数据")
+        self.main_btn_2 = QPushButton("导出数据")
         # 修改信号发射方式
         self.main_btn_2.clicked.connect(
             lambda: self.main_button_clicked_signal.emit())  # 连接 "main_button_clicked" 信号到 main_button 点击事件
@@ -208,6 +211,34 @@ class Ui(QWidget):
         self.about_text.setReadOnly(True)  # 设置为只读
         with open("app/about.md", "r", encoding="utf-8") as f:
             markdown_text = f.read()
+        try:
+            response_markdown_text = requests.get(
+                'https://raw.githubusercontent.com/jiongjiongJOJO/telegram_info_export/refs/heads/master/app/about.md'
+            )
+            if response_markdown_text.status_code == 200:
+                markdown_text = response_markdown_text.text
+        except:
+            print("获取远程about.md文件失败")
+
+        try:
+            response_latest_version = requests.get(
+                'https://raw.githubusercontent.com/jiongjiongJOJO/telegram_info_export/refs/heads/master/app/version.py'
+            )
+            if response_latest_version.status_code == 200:
+                latest_version = response_latest_version.text
+                markdown_text = markdown_text.replace('{latest_version}', latest_version)
+            else:
+                markdown_text = markdown_text.replace(
+                    '{latest_version}', '<span style="color: red;">unknown</span>'
+                )
+        except:
+            print("获取远程version.py文件失败")
+            markdown_text = markdown_text.replace(
+                '{latest_version}', '<span style="color: red;">unknown</span>'
+            )
+        markdown_text = markdown_text.replace(
+            '{current_version}', VERSION
+        )
         html = markdown.markdown(markdown_text)  # 使用 markdown 将 markdown 文本转换为 html
         self.about_text.setHtml(html)  # 将 html 添加到 QTextBrowser
         # 设置页内的超链接以新窗口的形式打开
