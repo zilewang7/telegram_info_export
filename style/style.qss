@@ -57,36 +57,6 @@ QPushButton:pressed{
    color: #333;
 }
 
-
-/* 下拉框样式 */
-QComboBox {
-   background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 6px;
-    padding-right: 25px; /* 留出下拉箭头空间 */
-    color: #555; /* 设置文本颜色 */
-}
-
-QComboBox::drop-down {
-    border: 0px;
-}
-
-QComboBox::down-arrow {
-     /* 这里应该替换为你的向下箭头图标的路径 */
-    image: url("down_arrow.png");
-    width: 14px;
-    height: 14px;
-    margin-right: 8px;
-}
-
-QComboBox QAbstractItemView {
-   border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    selection-background-color: #e0e0e0;
-}
-
 QLineEdit {
     background-color: #fff;
     border: 1px solid #ddd;
@@ -104,8 +74,6 @@ QTextBrowser {
     border: 1px solid #ddd;
     border-radius: 4px;
      padding: 6px;
-     /* 移除默认的阴影效果 */
-    box-shadow: none;
     outline: none;
 }
 /* QTextBrowser 基础样式*/
@@ -160,7 +128,6 @@ QScrollBar::sub-line:vertical {
 QScrollBar::add-page:vertical,
 QScrollBar::sub-page:vertical {
 	background: none !important;
-    /*background: pink !important;*/  方便测试时查看效果
 }
 
 QRadioButton {

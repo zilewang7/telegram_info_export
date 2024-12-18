@@ -4,6 +4,7 @@ import requests
 import traceback
 import pandas as pd
 from telethon import TelegramClient
+from app.utils import get_resource_path
 from PyQt5.QtCore import QThread, pyqtSignal
 from openpyxl.reader.excel import load_workbook
 from telethon.errors import SessionPasswordNeededError
@@ -184,9 +185,10 @@ class ProxyVerifyThread(QThread):
 
 class Controller:
     def __init__(self, ui):
+        self.style_path = get_resource_path("style/style.qss")
         self.ui = ui
         self.setup_connections()  # 连接信号和槽函数
-        self.ui.load_stylesheet("style/style.qss")  # 在这里加载样式表
+        self.ui.load_stylesheet(self.style_path)  # 在这里加载样式表
 
         self.proxy_settings = None
         self.proxy_thread = None  # 初始化线程对象

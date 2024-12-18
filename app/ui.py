@@ -1,13 +1,13 @@
 import requests
 import markdown
+from app.version import VERSION
 from PyQt5.QtGui import QPixmap, QIcon
+from app.utils import get_resource_path
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout,
     QHBoxLayout, QFrame, QRadioButton, QStackedWidget, QGridLayout, QTextBrowser
 )
-
-from app.version import VERSION
 
 
 class Ui(QWidget):
@@ -36,8 +36,11 @@ class Ui(QWidget):
         self.main_btn_2 = None
         self.api_hash_input = None
         self.id_input = None
+        self.logo_path = get_resource_path("assets/logo.png")
+        self.about_path = get_resource_path("app/about.md")
+
         self.setWindowTitle("Telegram数据导出")
-        self.setWindowIcon(QIcon("assets/logo.png"))
+        self.setWindowIcon(QIcon(self.logo_path))
         self.setMinimumSize(580, 330)
         self.resize(580, 330)
 
@@ -59,7 +62,7 @@ class Ui(QWidget):
 
         self.logo = QLabel()
         self.logo.setObjectName("logo_label")
-        pixmap = QPixmap("assets/logo.png")
+        pixmap = QPixmap(self.logo_path)
         self.logo.setPixmap(pixmap.scaledToHeight(50))
         self.logo.setAlignment(Qt.AlignCenter)
         self.logo_name_layout.addWidget(self.logo)
@@ -209,7 +212,7 @@ class Ui(QWidget):
         layout.setContentsMargins(20, 20, 20, 20)
         self.about_text = QTextBrowser()  # 修改 QTextEdit 为 QTextBrowser
         self.about_text.setReadOnly(True)  # 设置为只读
-        with open("app/about.md", "r", encoding="utf-8") as f:
+        with open(self.about_path, "r", encoding="utf-8") as f:
             markdown_text = f.read()
         try:
             response_markdown_text = requests.get(
