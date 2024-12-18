@@ -1,6 +1,6 @@
 import sys
-from app.ui import Ui
-from app.controller import Controller
+from app.ui.ui import Ui
+from app.controller.controller import Controller
 from PyQt5.QtWidgets import QApplication
 
 
