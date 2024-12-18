@@ -1,13 +1,68 @@
+# ui.py
 import requests
 import markdown
 from app.version import VERSION
 from PyQt5.QtGui import QPixmap, QIcon
 from app.utils import get_resource_path
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QThread
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QPushButton, QLineEdit, QVBoxLayout,
     QHBoxLayout, QFrame, QRadioButton, QStackedWidget, QGridLayout, QTextBrowser
 )
+
+class AboutPageUpdater(QThread):
+    update_signal = pyqtSignal(str)
+
+    def __init__(self, about_path):
+        super().__init__()
+        self.about_path = about_path
+
+    def run(self):
+        markdown_text = ""
+        try:
+            with open(self.about_path, "r", encoding="utf-8") as f:
+                markdown_text = f.read()
+        except Exception as e:
+            print(f"加载本地 about.md 失败: {e}")
+
+        try:
+            # 获取远程 about.md 内容
+            response_markdown_text = requests.get(
+                'https://raw.githubusercontent.com/jiongjiongJOJO/telegram_info_export/refs/heads/master/app/about.md',
+                timeout=5  # 设置超时时间为5秒
+            )
+            response_markdown_text.raise_for_status()  # 如果请求不成功，抛出异常
+            markdown_text = response_markdown_text.text
+
+            print('成功获取远程 about.md')
+        except requests.exceptions.RequestException as e:
+            print(f"获取远程 about.md 文件失败: {e}")
+
+        try:
+            # 获取远程 version.py 文件
+            response_latest_version = requests.get(
+                'https://raw.githubusercontent.com/jiongjiongJOJO/telegram_info_export/refs/heads/master/app/version.py',
+                timeout=5  # 设置超时时间为5秒
+            )
+            response_latest_version.raise_for_status()  # 如果请求不成功，抛出异常
+            latest_version = response_latest_version.text
+            namespace = {}
+            exec(latest_version, namespace)
+            markdown_text = markdown_text.replace(
+                '{latest_version}',
+                namespace.get('VERSION', '<span style="color: red;">unknown</span>')
+            )
+            print('成功获取远程 version.py')
+        except requests.exceptions.RequestException as e:
+            print(f"获取远程 version.py 文件失败: {e}")
+            markdown_text = markdown_text.replace(
+                '{latest_version}', '<span style="color: red;">unknown</span>'
+            )
+
+        markdown_text = markdown_text.replace(
+            '{current_version}', VERSION
+        )
+        self.update_signal.emit(markdown_text)
 
 
 class Ui(QWidget):
@@ -210,49 +265,40 @@ class Ui(QWidget):
     def setup_about_page(self):
         layout = QVBoxLayout(self.about_page)
         layout.setContentsMargins(20, 20, 20, 20)
-        self.about_text = QTextBrowser()  # 修改 QTextEdit 为 QTextBrowser
-        self.about_text.setReadOnly(True)  # 设置为只读
-        with open(self.about_path, "r", encoding="utf-8") as f:
-            markdown_text = f.read()
-        try:
-            response_markdown_text = requests.get(
-                'https://raw.githubusercontent.com/jiongjiongJOJO/telegram_info_export/refs/heads/master/app/about.md'
-            )
-            if response_markdown_text.status_code == 200:
-                markdown_text = response_markdown_text.text
-        except:
-            print("获取远程about.md文件失败")
+        self.about_text = QTextBrowser()
+        self.about_text.setReadOnly(True)
+        markdown_text = ""
 
         try:
-            response_latest_version = requests.get(
-                'https://raw.githubusercontent.com/jiongjiongJOJO/telegram_info_export/refs/heads/master/app/version.py'
-            )
-            if response_latest_version.status_code == 200:
-                latest_version = response_latest_version.text
-                # latest_version = 'VERSION = \'v1.0.0\''
-                namespace = {}
-                exec(latest_version, namespace)
-                markdown_text = markdown_text.replace(
-                    '{latest_version}',
-                    namespace.get('VERSION', '<span style="color: red;">unknown</span>')
-                )
-            else:
-                markdown_text = markdown_text.replace(
-                    '{latest_version}', '<span style="color: red;">unknown</span>'
-                )
-        except:
-            print("获取远程version.py文件失败")
-            markdown_text = markdown_text.replace(
-                '{latest_version}', '<span style="color: red;">unknown</span>'
-            )
+            with open(self.about_path, "r", encoding="utf-8") as f:
+                markdown_text = f.read()
+        except Exception as e:
+            print(f"加载本地 about.md 失败: {e}")
+
         markdown_text = markdown_text.replace(
             '{current_version}', VERSION
         )
-        html = markdown.markdown(markdown_text)  # 使用 markdown 将 markdown 文本转换为 html
-        self.about_text.setHtml(html)  # 将 html 添加到 QTextBrowser
-        # 设置页内的超链接以新窗口的形式打开
+        markdown_text = markdown_text.replace(
+            '{latest_version}', '<span style="color: yello;">正在获取……</span>'
+        )
+
+        html = markdown.markdown(markdown_text)
+        self.about_text.setHtml(html)
         self.about_text.setOpenExternalLinks(True)
         layout.addWidget(self.about_text)
+        # 实例化 QThread线程
+        self.about_page_updater = AboutPageUpdater(self.about_path)
+        # 连接信号槽
+        self.about_page_updater.update_signal.connect(self.update_about_text_browser)
+        # 启动线程
+        self.about_page_updater.start()
+
+        # 创建QThread线程，获取远程 about.md 文件
+        # threading.Thread(target=self.update_about_page).start()
+
+    def update_about_text_browser(self, markdown_text):
+        html = markdown.markdown(markdown_text)
+        self.about_text.setHtml(html)
 
     def set_current_page(self, index):
         self.content_area.setCurrentIndex(index)
@@ -267,3 +313,4 @@ class Ui(QWidget):
                 self.setStyleSheet(f.read())
         except FileNotFoundError:
             print(f"Error: Style sheet '{filename}' not found.")
+

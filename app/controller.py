@@ -200,6 +200,42 @@ class Controller:
         self.ui.save_verify_button_clicked_signal.connect(self.on_save_verify_button_clicked)
         self.ui.set_page_signal.connect(self.on_set_page)
 
+    def on_set_page(self, index):
+        self.ui.set_current_page(index)
+        if index == 1:  # 当切换到设置界面时
+            if self.proxy_settings:
+                #  更新 UI 界面
+                self.update_settings_ui()
+                self.ui.verify_label.setText("配置已加载")
+                self.ui.verify_label.setStyleSheet("color: green")
+            else:
+                # 如果没有找到配置
+                self.clear_settings_ui()
+                self.ui.verify_label.setText("")
+
+    def update_settings_ui(self):
+        if self.proxy_settings:
+            if len(self.proxy_settings) == 3:
+                proxy_type, proxy_ip, proxy_port = self.proxy_settings
+                username = ''
+                password = ''
+            else:
+                proxy_type, proxy_ip, proxy_port, username, password = self.proxy_settings
+            for radio in self.ui.proxy_type_radio_list:
+                radio.setChecked(radio.text() == proxy_type)
+            self.ui.proxy_ip_input.setText(proxy_ip)
+            self.ui.proxy_port_input.setText(proxy_port)
+            self.ui.username_input.setText(username)
+            self.ui.password_input.setText(password)
+
+    def clear_settings_ui(self):
+        for radio in self.ui.proxy_type_radio_list:
+            radio.setChecked(False)
+        self.ui.proxy_ip_input.clear()
+        self.ui.proxy_port_input.clear()
+        self.ui.username_input.clear()
+        self.ui.password_input.clear()
+
     async def on_main_button_clicked(self):
         # 检查按钮是否已经在运行
         if self.is_main_button_running:
@@ -264,12 +300,25 @@ class Controller:
         if result:
             self.ui.verify_label.setText("配置已保存，代理验证成功")
             self.ui.verify_label.setStyleSheet("color: green")
-            # 可以把self.proxy_settings赋值 方便其它函数使用
+            # 保存配置到 Controller
+            proxy_type = ""
+            for radio in self.ui.proxy_type_radio_list:
+                if radio.isChecked():
+                    proxy_type = radio.text()
+            proxy_ip = self.ui.proxy_ip_input.text()
+            proxy_port = self.ui.proxy_port_input.text()
+            username = self.ui.username_input.text()
+            password = self.ui.password_input.text()
+
+            if username and password:
+                self.proxy_settings = (proxy_type, proxy_ip, proxy_port, username, password)
+            else:
+                self.proxy_settings = (proxy_type, proxy_ip, proxy_port)
+            print("proxy saved:", self.proxy_settings)
         else:
             self.ui.verify_label.setText("代理验证失败，请检查配置")
             self.ui.verify_label.setStyleSheet("color: red")
         # 无论如何都需要启用按钮
         self.ui.save_verify_btn.setEnabled(True)
 
-    def on_set_page(self, index):
-        self.ui.set_current_page(index)
+
