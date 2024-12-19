@@ -43,12 +43,10 @@ class UiMainPage(QWidget):
         # 保存/获取数据按钮
         self.main_btn_2 = QPushButton("导出数据")
         # 修改信号发射方式
-        self.main_btn_2.clicked.connect(
-            lambda: self.main_button_clicked_signal.emit())  # 连接 "main_button_clicked" 信号到 main_button 点击事件
+        self.main_btn_2.clicked.connect(self.main_button_clicked_signal.emit)  # 连接 "main_button_clicked" 信号到 main_button 点击事件
 
         layout.addWidget(self.main_btn_2, 3, 0, 1, 2, Qt.AlignCenter)
 
         # 显示数据
         self.export_info_label = QLabel("")
         layout.addWidget(self.export_info_label, 4, 0, 1, 2)
-

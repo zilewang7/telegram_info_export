@@ -63,11 +63,11 @@ class ControllerProxy:
     def update_settings_ui(self):
         if self.main_controller.proxy_settings:
             if len(self.main_controller.proxy_settings) == 3:
-                proxy_type, proxy_ip, proxy_port = self.main_controller.proxy_settings
+                proxy_type, proxy_ip, proxy_port = map(str, self.main_controller.proxy_settings)
                 username = ''
                 password = ''
             else:
-                proxy_type, proxy_ip, proxy_port, username, password = self.main_controller.proxy_settings
+                proxy_type, proxy_ip, proxy_port, username, password = map(str, self.main_controller.proxy_settings)
             for radio in self.ui.settings_page.proxy_type_radio_list:
                 radio.setChecked(radio.text() == proxy_type)
             self.ui.settings_page.proxy_ip_input.setText(proxy_ip)
@@ -125,9 +125,9 @@ class ControllerProxy:
             password = self.ui.settings_page.password_input.text()
 
             if username and password:
-                self.main_controller.proxy_settings = (proxy_type, proxy_ip, proxy_port, username, password)
+                self.main_controller.proxy_settings = (proxy_type, proxy_ip, int(proxy_port), username, password)
             else:
-                self.main_controller.proxy_settings = (proxy_type, proxy_ip, proxy_port)
+                self.main_controller.proxy_settings = (proxy_type, proxy_ip, int(proxy_port))
             print("proxy saved:", self.main_controller.proxy_settings)
         else:
             self.ui.settings_page.verify_label.setText("代理验证失败，请检查配置")
