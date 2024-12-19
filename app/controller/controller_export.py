@@ -1,7 +1,7 @@
-import re
 import traceback
 import pandas as pd
 from telethon import TelegramClient
+from app.utils.utils import get_display_width
 from openpyxl.reader.excel import load_workbook
 from telethon.errors import SessionPasswordNeededError
 from openpyxl.worksheet.table import Table, TableStyleInfo
@@ -9,23 +9,6 @@ from PyQt5.QtWidgets import QInputDialog, QMessageBox, QLineEdit
 
 
 async def get_telegram_info(api_name, api_id, api_hash, phone_number, proxy=None, parent=None):
-    def get_display_width(s):
-        """
-        计算字符串的显示宽度
-        中文字符算2个宽度，英文字符算1个宽度
-        """
-        if not isinstance(s, str):
-            s = str(s)
-        # 使用正则表达式分辨中文字符和非中文字符
-        zh_pattern = re.compile(u'[\u4e00-\u9fa5]')
-        width = 0
-        for ch in s:
-            if zh_pattern.match(ch):
-                width += 2
-            else:
-                width += 1
-        return width
-
     # 创建并连接客户端
     print(api_name, api_id, api_hash, phone_number, proxy)
     client = TelegramClient(api_name, int(api_id), api_hash, proxy=proxy)
