@@ -31,7 +31,7 @@ jobs:
           pyinstaller -F main.py --windowed -n telegram_info_export --add-data "assets\logo.png;assets" --add-data "app\about.md;app" --add-data "style\style.qss;style" --upx-dir "$UPX_PATH"
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: telegram_info_export
           path: ./dist/telegram_info_export.exe
