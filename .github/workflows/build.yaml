@@ -1,9 +1,7 @@
-name: 打包和发布Python应用
+name: 打包Python应用
 
 on:
-  workflow_dispatch:
-  release:
-    types: [published]
+  workflow_dispatch:  # 保留手动触发选项
 
 jobs:
   build:
@@ -32,12 +30,9 @@ jobs:
         run: |
           pyinstaller -F main.py --windowed -n telegram_info_export --add-data "assets\logo.png;assets" --add-data "app\about.md;app" --add-data "style\style.qss;style" --upx-dir "$UPX_PATH"
 
-      - name: 上传发布资源
-        uses: actions/upload-release-asset@v1
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v3
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/telegram_info_export.exe
-          asset_name: telegram_info_export.exe
-          asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: telegram_info_export
+          path: ./dist/telegram_info_export.exe
+          retention-days: 90  # 可选，设置保留期限，默认为90天
