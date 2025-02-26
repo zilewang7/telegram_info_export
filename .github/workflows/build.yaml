@@ -1,6 +1,7 @@
 name: 打包和发布Python应用
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
